@@ -1,0 +1,535 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Boston Burrito Power Rankings</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=DM+Sans:ital,wght@0,400;0,500;0,700;0,800;1,500&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#FBF3E5;
+    --cream-2:#F4E8D4;
+    --ink:#241A12;
+    --coral:#FF5A45;
+    --avocado:#5C7A41;
+    --gold:#F5B82E;
+    --brick:#9E3324;
+    --line: rgba(36,26,18,0.14);
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0;
+    background:var(--cream);
+    color:var(--ink);
+    font-family:'DM Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  .display{font-family:'Archivo Black', sans-serif; text-transform:uppercase; letter-spacing:0.01em;}
+  .mono{font-family:'Space Mono', monospace;}
+
+  /* texture */
+  body::before{
+    content:"";
+    position:fixed; inset:0;
+    background-image: radial-gradient(circle, rgba(36,26,18,0.05) 1px, transparent 1px);
+    background-size: 14px 14px;
+    pointer-events:none;
+    z-index:0;
+  }
+
+  .wrap{max-width:760px; margin:0 auto; padding:0 20px; position:relative; z-index:1;}
+
+  /* ---------- HERO ---------- */
+  header.hero{
+    padding:48px 0 36px;
+    text-align:center;
+    position:relative;
+  }
+  .tape{
+    display:inline-block;
+    background:var(--gold);
+    color:var(--ink);
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    font-weight:700;
+    letter-spacing:0.12em;
+    text-transform:uppercase;
+    padding:6px 14px;
+    transform:rotate(-2deg);
+    box-shadow:0 2px 0 rgba(36,26,18,0.2);
+    margin-bottom:22px;
+  }
+  h1.title{
+    font-size:clamp(38px, 9vw, 62px);
+    line-height:0.98;
+    margin:0 0 16px;
+    transform:rotate(-1.2deg);
+    color:var(--brick);
+    -webkit-text-stroke: 1.5px var(--ink);
+    text-stroke: 1.5px var(--ink);
+  }
+  .title .pop{ color:var(--coral); -webkit-text-stroke: 1.5px var(--ink);}
+  p.subhead{
+    font-size:16px;
+    line-height:1.55;
+    max-width:480px;
+    margin:0 auto;
+    color:var(--ink);
+    opacity:0.85;
+  }
+  p.subhead b{ color:var(--brick); }
+
+  .stat-row{
+    display:flex;
+    justify-content:center;
+    gap:10px;
+    flex-wrap:wrap;
+    margin-top:28px;
+  }
+  .stat-pill{
+    background:var(--ink);
+    color:var(--cream);
+    border-radius:100px;
+    padding:8px 16px;
+    font-family:'Space Mono',monospace;
+    font-size:12px;
+    font-weight:700;
+    display:flex; align-items:center; gap:6px;
+  }
+  .stat-pill .n{ color:var(--gold); }
+
+  /* ---------- SECTION LABELS ---------- */
+  .section-label{
+    display:flex;
+    align-items:center;
+    gap:12px;
+    margin:0 0 24px;
+  }
+  .section-label .num{
+    font-family:'Space Mono', monospace;
+    font-size:13px;
+    background:var(--ink);
+    color:var(--cream);
+    border-radius:50%;
+    width:28px; height:28px;
+    display:flex; align-items:center; justify-content:center;
+    flex-shrink:0;
+  }
+  .section-label h2{
+    font-size:22px;
+    margin:0;
+    color:var(--ink);
+  }
+  .section-label .count{
+    font-family:'Space Mono', monospace;
+    font-size:12px;
+    color:var(--avocado);
+    background:rgba(92,122,65,0.12);
+    padding:4px 10px;
+    border-radius:100px;
+    margin-left:auto;
+    white-space:nowrap;
+  }
+
+  section{ padding:36px 0; }
+  .divider{
+    border:none;
+    border-top:2px dashed var(--line);
+    margin:0;
+  }
+
+  /* ---------- LEADERBOARD ---------- */
+  .lb-list{ display:flex; flex-direction:column; gap:14px; }
+
+  .lb-card{
+    background:var(--cream-2);
+    border:2px solid var(--ink);
+    border-radius:18px;
+    padding:16px;
+    display:flex;
+    align-items:center;
+    gap:14px;
+    position:relative;
+    transition:transform 0.15s ease;
+  }
+  .lb-card:hover{ transform:translateY(-2px); }
+
+  .lb-card.champ{
+    background:var(--gold);
+    box-shadow:5px 5px 0 var(--ink);
+  }
+  .lb-card:not(.champ){
+    box-shadow:3px 3px 0 var(--line);
+  }
+
+  .rank{
+    font-family:'Archivo Black', sans-serif;
+    font-size:22px;
+    width:38px;
+    flex-shrink:0;
+    text-align:center;
+    color:var(--brick);
+  }
+  .lb-card.champ .rank{ font-size:26px; }
+
+  .lb-body{ flex:1; min-width:0; }
+  .lb-name{
+    font-weight:800;
+    font-size:17px;
+    margin:0 0 2px;
+    color:var(--ink);
+  }
+  .lb-loc{
+    font-size:13px;
+    color:var(--ink);
+    opacity:0.65;
+    margin:0;
+  }
+  .lb-tag{
+    display:inline-block;
+    margin-top:6px;
+    font-family:'Space Mono', monospace;
+    font-size:11px;
+    background:rgba(255,90,69,0.14);
+    color:var(--brick);
+    padding:3px 9px;
+    border-radius:100px;
+  }
+
+  .score-stamp{
+    flex-shrink:0;
+    width:58px; height:58px;
+    border-radius:50%;
+    border:3px solid var(--ink);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    background:var(--cream);
+    transform:rotate(-6deg);
+  }
+  .lb-card:nth-child(even) .score-stamp{ transform:rotate(5deg); }
+  .score-stamp .v{
+    font-family:'Archivo Black', sans-serif;
+    font-size:18px;
+    line-height:1;
+    color:var(--brick);
+  }
+  .score-stamp .o{
+    font-family:'Space Mono', monospace;
+    font-size:9px;
+    opacity:0.6;
+  }
+
+  .champ-ribbon{
+    position:absolute;
+    top:-12px; right:14px;
+    background:var(--brick);
+    color:var(--cream);
+    font-family:'Space Mono', monospace;
+    font-size:10.5px;
+    font-weight:700;
+    letter-spacing:0.06em;
+    padding:5px 10px;
+    border-radius:6px;
+    transform:rotate(3deg);
+  }
+
+  /* ---------- TO TRY ---------- */
+  .search-row{
+    display:flex;
+    gap:10px;
+    margin-bottom:20px;
+  }
+  .search-input{
+    flex:1;
+    font-family:'DM Sans', sans-serif;
+    font-size:14px;
+    padding:12px 16px;
+    border:2px solid var(--ink);
+    border-radius:12px;
+    background:var(--cream);
+    color:var(--ink);
+    outline:none;
+  }
+  .search-input::placeholder{ color:rgba(36,26,18,0.45); }
+  .search-input:focus{ border-color:var(--coral); }
+
+  .try-grid{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:10px;
+  }
+  @media (max-width:480px){
+    .try-grid{ grid-template-columns:1fr; }
+  }
+  .try-card{
+    border:2px solid var(--ink);
+    border-radius:14px;
+    padding:12px 14px;
+    background:var(--cream-2);
+    display:flex;
+    flex-direction:column;
+    gap:3px;
+  }
+  .try-name{ font-weight:800; font-size:14.5px; }
+  .try-loc{ font-size:12px; opacity:0.65; }
+  .try-note{
+    margin-top:4px;
+    font-family:'Space Mono', monospace;
+    font-size:10.5px;
+    color:var(--avocado);
+  }
+  .no-results{
+    text-align:center;
+    padding:30px 10px;
+    font-family:'Space Mono', monospace;
+    font-size:13px;
+    opacity:0.6;
+    display:none;
+  }
+
+  /* ---------- FOOTER ---------- */
+  footer{
+    padding:46px 0 60px;
+    text-align:center;
+  }
+  .footer-stamp{
+    display:inline-block;
+    border:2px dashed var(--ink);
+    border-radius:16px;
+    padding:24px 22px;
+    max-width:380px;
+  }
+  .footer-stamp h3{
+    font-size:19px;
+    margin:0 0 8px;
+    color:var(--brick);
+  }
+  .footer-stamp p{
+    font-size:13.5px;
+    line-height:1.5;
+    opacity:0.8;
+    margin:0 0 14px;
+  }
+  .cta-btn{
+    display:inline-block;
+    background:var(--coral);
+    color:var(--cream);
+    font-weight:800;
+    font-size:13.5px;
+    text-decoration:none;
+    padding:11px 22px;
+    border-radius:100px;
+    border:2px solid var(--ink);
+    box-shadow:3px 3px 0 var(--ink);
+    transition:transform 0.1s ease;
+  }
+  .cta-btn:active{ transform:translate(2px,2px); box-shadow:1px 1px 0 var(--ink); }
+  .fineprint{
+    margin-top:24px;
+    font-family:'Space Mono', monospace;
+    font-size:10.5px;
+    opacity:0.45;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    *{ transition:none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <header class="hero">
+    <span class="tape">FIELD RESEARCH · ONGOING</span>
+    <h1 class="title">boston<br><span class="pop">burrito</span><br>rankings</h1>
+    <p class="subhead">I'm from San Diego, I live in Boston now, and apparently every burrito within an hour of here is my problem. <b>This is every spot you've all sent me</b> — rated as I work through the list, one tortilla at a time.</p>
+    <div class="stat-row" id="statRow"></div>
+  </header>
+
+  <hr class="divider">
+
+  <section id="rankings">
+    <div class="section-label">
+      <span class="num">1</span>
+      <h2>the rankings</h2>
+      <span class="count" id="rankedCount"></span>
+    </div>
+    <div class="lb-list" id="lbList"></div>
+  </section>
+
+  <hr class="divider">
+
+  <section id="totry">
+    <div class="section-label">
+      <span class="num">2</span>
+      <h2>still on the list</h2>
+      <span class="count" id="tryCount"></span>
+    </div>
+    <div class="search-row">
+      <input class="search-input" id="searchInput" type="text" placeholder="search by name or neighborhood...">
+    </div>
+    <div class="try-grid" id="tryGrid"></div>
+    <p class="no-results" id="noResults">nothing matches that — try again, or send me a rec 👀</p>
+  </section>
+
+  <footer>
+    <div class="footer-stamp">
+      <h3>know a spot I'm missing?</h3>
+      <p>Send it my way and it goes straight on the list. Yes, I will actually go. Yes, I will have opinions.</p>
+      <a class="cta-btn" href="https://www.tiktok.com/" target="_blank" rel="noopener">follow along on tiktok →</a>
+    </div>
+    <p class="fineprint">last updated automatically from a spreadsheet that has seen things</p>
+  </footer>
+
+</div>
+
+<script>
+  // ---- DATA ----
+  // Edit this array to add/update spots. "score" left blank (null) = not yet rated.
+  const RESTAURANTS = [
+    {name:"Taqueria Jalisco", location:"East Boston", note:"visited x5", score:8.9},
+    {name:"Taquisimo", location:"Bow Market, Somerville", note:null, score:8.8},
+    {name:"La Hacienda", location:"East Boston", note:"visited x3", score:8.7},
+    {name:"Tacos Lupita", location:"Haverhill", note:null, score:8.6},
+    {name:"Angela's Cafe", location:"East Boston", note:"visited x3", score:8.0},
+    {name:"Cactus Grill", location:"Maverick Square", note:"shrimp burrito", score:7.7},
+
+    {name:"El Barrio", location:"Milton", note:null, score:null},
+    {name:"El Pelon", location:"Brighton", note:"visited x2", score:null},
+    {name:"Los Amigos Taqueria", location:"Waltham", note:null, score:null},
+    {name:"Taqueria El Amigo", location:"Waltham", note:"visited x2", score:null},
+    {name:"Taqueria Mexico", location:"Waltham", note:"visited x2", score:null},
+    {name:"La Plazita", location:"Watertown", note:"tacos rec'd", score:null},
+    {name:"La Fonda", location:null, note:null, score:null},
+    {name:"Food Truck in Nashua NH", location:"Nashua, NH", note:null, score:null},
+    {name:"Locales", location:"Hingham", note:"owned by SD transplant", score:null},
+    {name:"Taco Mex", location:"East Boston", note:null, score:null},
+    {name:"Andreas", location:"Chelsea", note:null, score:null},
+    {name:"El Serape", location:"Weymouth Landing", note:null, score:null},
+    {name:"Super Burrito", location:"Everett", note:null, score:null},
+    {name:"Yellow Door", location:null, note:"tacos rec'd", score:null},
+    {name:"Cinco De Mayo", location:"Winthrop", note:null, score:null},
+    {name:"Cactus Mexican Grill", location:"East Boston", note:"steak burrito", score:null},
+    {name:"Sabroso Taqueria", location:null, note:null, score:null},
+    {name:"Villa Mexico", location:"Downtown, Water St", note:"owners from Mexico City", score:null},
+    {name:"Tepeyac", location:"Salem", note:null, score:null},
+    {name:"Casa Vallarta", location:"Saugus", note:null, score:null},
+    {name:"Viva Burrito", location:"Franklin Street", note:null, score:null},
+    {name:"Orale", location:"Cambridge", note:null, score:null},
+    {name:"Rinconcito Mau", location:"Lawrence", note:null, score:null},
+    {name:"Mi Pueblos", location:"Cape Cod", note:null, score:null},
+    {name:"Burrito Loco", location:"New Hampshire", note:null, score:null},
+    {name:"La Dona Taqueria", location:"New Hampshire", note:null, score:null},
+    {name:"Agave", location:"Newburyport", note:null, score:null},
+    {name:"La Taquieria", location:"Dedham", note:null, score:null},
+    {name:"Taco Mex (Eastie)", location:"Eastie", note:"burrito paisa w/ maduro", score:null},
+    {name:"Don Julio", location:"Somerville", note:"visited x2", score:null},
+    {name:"Santa Fe Burritos", location:"Franklin, MA", note:null, score:null},
+    {name:"Mi Pulgarcito", location:"Brighton", note:null, score:null},
+    {name:"Cilantros Mexican Grill", location:"Saugus", note:"three meats burrito", score:null},
+    {name:"Taco El Paso", location:"Everett", note:null, score:null},
+    {name:"Picante", location:"Medford/Somerville", note:null, score:null},
+    {name:"Dolores", location:"Providence", note:null, score:null},
+    {name:"No Problemo", location:"New Bedford", note:null, score:null},
+    {name:"Los Amigos Taqueria", location:"West Roxbury", note:null, score:null},
+    {name:"Anejo", location:null, note:null, score:null},
+    {name:"Oscar Burritos", location:"Boxborough", note:null, score:null},
+    {name:"Toasty's Burrito", location:"Lynn", note:null, score:null},
+    {name:"Chivo", location:"Cambridge", note:null, score:null},
+    {name:"Mi Pueblito", location:"East Boston", note:null, score:null},
+    {name:"El Vaquero", location:"West Medford", note:null, score:null},
+    {name:"Mexico Lindo", location:"Melrose", note:null, score:null},
+    {name:"Pollo Royal", location:"Revere", note:null, score:null},
+    {name:"Bueno Y Sano", location:null, note:null, score:null},
+    {name:"Los Pinos", location:"Chelsea", note:null, score:null},
+    {name:"Burritos de la O", location:"East Boston", note:"only open Mondays · caramelo burrito", score:null},
+    {name:"Saxonville Burrito", location:null, note:null, score:null},
+    {name:"La Casa Mesa", location:"Everett", note:null, score:null},
+    {name:"Fiestas", location:"Bridgewater", note:null, score:null},
+    {name:"El Nopal Bar & Grill", location:"Everett", note:null, score:null},
+    {name:"Lunitas", location:"Quincy", note:null, score:null},
+    {name:"Taqueria Don Roge (taco truck)", location:"Everett", note:null, score:null},
+    {name:"Mexica", location:"Tewksbury", note:null, score:null},
+    {name:"La Taqueria", location:"Hyde Park", note:null, score:null},
+    {name:"Patzcuaro", location:null, note:null, score:null},
+    {name:"Taco Loco", location:"Somerville", note:null, score:null},
+    {name:"La Posada", location:"Somerville", note:null, score:null},
+    {name:"Orale", location:"Cambridge", note:null, score:null},
+    {name:"Plazita", location:"Medford", note:null, score:null},
+    {name:"Purple Cactus", location:"Jamaica Plain", note:null, score:null},
+    {name:"Tenoch", location:null, note:null, score:null},
+    {name:"Boca Taco", location:null, note:null, score:null},
+    {name:"Beantown Taqueria", location:"Cambridge", note:null, score:null},
+    {name:"California Burritos", location:"Nashua", note:null, score:null},
+    {name:"Tango Mango", location:"Newton", note:null, score:null},
+    {name:"El Charrito", location:"Chelsea", note:null, score:null},
+    {name:"La Mexicana Mini Mart & Tortilleria", location:"Providence", note:null, score:null},
+    {name:"Tapatillos", location:"Somerville", note:null, score:null},
+    {name:"Tijuana", location:"Chelsea", note:null, score:null},
+    {name:"Habaneros", location:"Allston", note:null, score:null},
+    {name:"La Poblanity Market y Taqueria", location:"Providence", note:null, score:null},
+  ];
+
+  const ranked = RESTAURANTS.filter(r => r.score != null).sort((a,b) => b.score - a.score);
+  const toTry = RESTAURANTS.filter(r => r.score == null);
+
+  // stats
+  document.getElementById('statRow').innerHTML = `
+    <span class="stat-pill"><span class="n">${RESTAURANTS.length}</span> spots tracked</span>
+    <span class="stat-pill"><span class="n">${ranked.length}</span> rated</span>
+    <span class="stat-pill"><span class="n">${toTry.length}</span> still to try</span>
+  `;
+
+  document.getElementById('rankedCount').textContent = `${ranked.length} rated`;
+  document.getElementById('tryCount').textContent = `${toTry.length} spots`;
+
+  // leaderboard
+  const lbList = document.getElementById('lbList');
+  lbList.innerHTML = ranked.map((r, i) => `
+    <div class="lb-card ${i===0 ? 'champ' : ''}">
+      ${i===0 ? '<span class="champ-ribbon">🏆 reigning champ</span>' : ''}
+      <span class="rank">#${i+1}</span>
+      <div class="lb-body">
+        <p class="lb-name">${r.name}</p>
+        <p class="lb-loc">${r.location || 'location unknown'}</p>
+        ${r.note ? `<span class="lb-tag">${r.note}</span>` : ''}
+      </div>
+      <div class="score-stamp">
+        <span class="v">${r.score}</span>
+        <span class="o">/ 10</span>
+      </div>
+    </div>
+  `).join('');
+
+  // to try grid + search
+  const tryGrid = document.getElementById('tryGrid');
+  const noResults = document.getElementById('noResults');
+  function renderTry(filter=''){
+    const f = filter.trim().toLowerCase();
+    const filtered = toTry.filter(r =>
+      r.name.toLowerCase().includes(f) || (r.location || '').toLowerCase().includes(f)
+    );
+    tryGrid.style.display = filtered.length ? 'grid' : 'none';
+    noResults.style.display = filtered.length ? 'none' : 'block';
+    tryGrid.innerHTML = filtered.map(r => `
+      <div class="try-card">
+        <span class="try-name">${r.name}</span>
+        <span class="try-loc">${r.location || 'location unknown'}</span>
+        ${r.note ? `<span class="try-note">${r.note}</span>` : ''}
+      </div>
+    `).join('');
+  }
+  renderTry();
+  document.getElementById('searchInput').addEventListener('input', e => renderTry(e.target.value));
+</script>
+
+</body>
+</html>
