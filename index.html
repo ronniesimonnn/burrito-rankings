@@ -61,8 +61,26 @@
     padding:6px 14px;
     transform:rotate(-2deg);
     box-shadow:0 2px 0 rgba(36,26,18,0.2);
-    margin-bottom:22px;
+    margin-bottom:18px;
   }
+  p.byline{
+    font-family:'Space Mono', monospace;
+    font-size:13px;
+    margin:0 0 22px;
+    color:var(--ink);
+    opacity:0.75;
+  }
+  p.byline strong{
+    color:var(--brick);
+    font-weight:700;
+  }
+  p.byline a{
+    color:var(--coral);
+    text-decoration:none;
+    font-weight:700;
+    border-bottom:1.5px dashed var(--coral);
+  }
+  p.byline a:hover{ opacity:0.75; }
   h1.title{
     font-size:clamp(38px, 9vw, 62px);
     line-height:0.98;
@@ -349,6 +367,7 @@
   <header class="hero">
     <span class="tape">FIELD RESEARCH · ONGOING</span>
     <h1 class="title">boston<br><span class="pop">burrito</span><br>rankings</h1>
+    <p class="byline">by <strong>Ronnie</strong> · <a href="https://www.tiktok.com/@ronniesimonnnn?_r=1&_t=ZT-97ViOiErzxO" target="_blank" rel="noopener">@ronniesimonnnn</a> on tiktok</p>
     <p class="subhead">I'm from San Diego, I live in Boston now, and apparently every burrito within an hour of here is my problem. <b>This is every spot you've all sent me</b> — rated as I work through the list, one tortilla at a time.</p>
     <div class="stat-row" id="statRow"></div>
   </header>
